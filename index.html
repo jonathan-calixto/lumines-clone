@@ -9,8 +9,56 @@
   </head>
 
   <body>
-    <button id="canvas-demo">Canvas Demo</button>
-    <button id="DOM-demo">DOM Demo</button>
     <script src="./dist/main.js"></script>
+
+    <div class='main'>
+      <div class='game-screen'>
+        <div>
+          <canvas 
+            id='next-piece-id' 
+            class='next-piece-class'
+            width="200"
+            height="400"
+          ></canvas>
+        </div>
+        <div>
+          <canvas 
+            id='game-board-id' 
+            class='game-board-class'
+            width="800"
+            height="500"
+          ></canvas>
+        </div>
+        <div class='info-div'>
+          <p>Level 
+            <br/>
+            <span>3</span>
+          </p>
+          <p>Time 
+            <br/>
+            <span>2:48</span>
+          </p>
+          <p>Score 
+            <br/>
+            <span>10457</span>
+          </p>
+          <p>High Score 
+            <br/>
+            <span>203345</span>
+          </p>
+          <p>Deleted 
+            <br/>
+            <span>169</span>
+          </p>
+          <button id="start-lumines">Start</button>
+          <button>Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class='footer-class'>
+      <div><p>Github</p></div>
+      <div><p>LinkedIn</p></div>
+    </footer>
   </body>
 </html>
