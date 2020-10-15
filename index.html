@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="./dist/main.css" />
+    <script type='text/javascript' src="./dist/main.js" charset='utf-8' defer></script>
     <title>Document</title>
   </head>
 
-  <body>
-    <script src="./dist/main.js"></script>
-
+  <body class='background'>
     <div class='main'>
       <div class='game-screen'>
         <div>
@@ -23,7 +22,7 @@
         </div>
         <div>
           <canvas 
-            id='game-board-id' 
+            id="game-board-id"
             class='game-board-class'
             width="800"
             height="500"
@@ -32,33 +31,33 @@
         <div class='info-div'>
           <p>Level 
             <br/>
-            <span>3</span>
+            <span>1</span>
           </p>
           <p>Time 
             <br/>
-            <span>2:48</span>
+            <span>0:00</span>
           </p>
           <p>Score 
             <br/>
-            <span>10457</span>
+            <span>0</span>
           </p>
           <p>High Score 
             <br/>
-            <span>203345</span>
+            <span>0</span>
           </p>
           <p>Deleted 
             <br/>
-            <span>169</span>
+            <span>0</span>
           </p>
           <button id="start-lumines">Start</button>
-          <button>Reset</button>
+          <button id="reset-lumines">Reset</button>
         </div>
       </div>
     </div>
-
+<!-- 
     <footer class='footer-class'>
       <div><p>Github</p></div>
       <div><p>LinkedIn</p></div>
-    </footer>
+    </footer> -->
   </body>
 </html>
