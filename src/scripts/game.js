@@ -1,8 +1,8 @@
 import Piece from "./piece";
 
-const COLS = 16;
-const ROWS = 10;
 const GRID_SIZE = 50;
+const ROWS = 10;
+const COLS = 16;
 // Object.freeze(COLS, ROWS, GRID_SIZE);
 
 const COLOR = [
@@ -11,9 +11,17 @@ const COLOR = [
     "#FC7A1E", // pumpkin
     "#C5E99B", // yellow-green crayola
     "#EDD2E0", // queen pink
-    "#6E4555" // eggplant
+    "#6E4555", // eggplant
+    '#584FEC',
+    '#000000',
+    '#E7E7E7',
+    '#F24C00',
 ];
 Object.freeze(COLOR);
+
+const ANIMATION = {
+    down: piece => ({ ...piece, y: piece.y + 1 }),
+};
 
 export default class Lumines {
     constructor(canvas, canvasDos){
@@ -25,44 +33,35 @@ export default class Lumines {
 
         this.firstColor = COLOR[Math.floor(Math.random() * COLOR.length)];
         this.secondColor = COLOR[Math.floor(Math.random() * COLOR.length)];
+        // colors may be the same, need refactoring for no duplicate colors
+        console.log(this.firstColor, this.secondColor); //remove after I refactor for correct colors
 
         this.ctx.scale(GRID_SIZE, GRID_SIZE);
         this.ctxDos.scale(GRID_SIZE, GRID_SIZE);
         this.movement();
-        // this.drawBoard();
+        this.animate = this.animate.bind(this);
+        this.time = { 
+            start: 0, 
+            elapsed: 0, 
+            level: 1000
+        };
     }
 
     resetField() {
         const startPosition = {
             x: 7,
-            y: 0
+            y: -1
         };
 
         this.grid = this.getNewBoard();
         this.piece = new Piece(this.ctx, this.ctxDos, this.firstColor, this.secondColor, startPosition.x, startPosition.y);
-        this.piece.render();
+        console.log(this.piece);
+        this.animate();
     }
 
     getNewBoard() {
         return Array.from({length: ROWS}, () => Array(COLS).fill(0));
     }
-
-    // drawBoard() {
-    //     var p = 10;
-
-    //     for (var x = 0; x <= GRID_SIZE; x += 40) {
-    //         this.ctx.moveTo(0.5 + x + p, p);
-    //         this.ctx.lineTo(0.5 + x + p, GRID_SIZE + p);
-    //     }
-
-    //     for (var x = 0; x <= GRID_SIZE; x += 40) {
-    //         this.ctx.moveTo(p, 0.5 + x + p);
-    //         this.ctx.lineTo(GRID_SIZE + p, 0.5 + x + p);
-    //     }
-
-    //     this.ctx.strokeStyle = "black";
-    //     this.ctx.stroke();
-    // }
 
     movement() {
         const POSITION = {
@@ -115,31 +114,50 @@ export default class Lumines {
                     break;
             }
             this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            this.piece.render();
+            this.animate();
 
             event.preventDefault();
-        }, true);
+        });
     }
 
-    insideWalls(x) {
+    sideBoundaries(x) {
         return x >= 0 && x < COLS;
     }
 
-    aboveFloor(y) {
+    bottomBoundary(y) {
         return y < ROWS;
     }
 
-    isEmpty(x, y) {
+    emptyPos(x, y) {
         return this.grid[y] && this.grid[y][x] === 0;
     }
 
     validPosition(piece) {
         return piece.piece.every((row, dy) => {
-            return row.every((value, dx) => {
+            return row.every((pos, dx) => {
                 let x = piece.x + dx;
                 let y = piece.y + dy;
-                return (this.isEmpty(value) || (this.insideWalls(x) & this.aboveFloor(y)));
+                return (this.emptyPos(pos) || (this.sideBoundaries(x) & this.bottomBoundary(y)));
             });
         });
+    }
+
+    animate(now = 0){
+        this.time.elapsed = now - this.time.start;
+
+        if (this.time.elapsed > this.time.level){
+            this.time.start = now;
+            this.animatePiece();
+        }
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.piece.render();
+        requestAnimationFrame(this.animate);
+    }
+
+    animatePiece(){
+        let newPosDown = ANIMATION.down(this.piece);
+        if (this.validPosition(newPosDown)) {
+            this.piece.move(newPosDown);
+        }
     }
 }

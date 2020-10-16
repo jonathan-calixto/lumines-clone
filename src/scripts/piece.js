@@ -67,18 +67,14 @@ export default class Piece {
     }
 
     rotate(piece){
-        let clone = JSON.parse(JSON.stringify(piece));
-
-        // Transpose matrix, p is the Piece.
         for (let y = 0; y < piece.piece.length; ++y) {
             for (let x = 0; x < y; ++x) {
                 [piece.piece[x][y], piece.piece[y][x]] =
                     [piece.piece[y][x], piece.piece[x][y]];
             }
         }
-
-        // Reverse the order of the columns.
-        piece.piece.forEach(row => row.reverse());        return clone;
+        piece.piece.forEach(row => row.reverse());
+        return piece;
     }
 }
 
