@@ -9,9 +9,12 @@ const canvasDos = document.getElementById('next-piece-id');
 
 function startGame() {
     let board = new Lumines(canvas, canvasDos);
+    
 
-    board.resetField();
+    board.generateField();
     console.table(board.grid);
+    console.table(board.nextGrid);
+    console.log(board);
 }
 
 function resetGame() {

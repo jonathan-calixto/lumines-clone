@@ -3,7 +3,9 @@ import Piece from "./piece";
 const GRID_SIZE = 50;
 const ROWS = 10;
 const COLS = 16;
-// Object.freeze(COLS, ROWS, GRID_SIZE);
+const PIECE_ROWS = 8;
+const PIECE_COLS = 4;
+Object.freeze(COLS, ROWS, GRID_SIZE, PIECE_ROWS, PIECE_COLS);
 
 const COLOR = [
     "thistle",
@@ -28,11 +30,11 @@ export default class Lumines {
         this.ctx = canvas.getContext('2d');
         this.ctxDos = canvasDos.getContext('2d');
         // debugger
-        this.dimensions = { width: canvas.width, height: canvas.height };
-        this.dimensionsDos = { width: canvasDos.width, height: canvasDos.height };
+        // this.dimensions = { width: canvas.width, height: canvas.height };
+        // this.dimensionsDos = { width: canvasDos.width, height: canvasDos.height };
 
-        this.firstColor = COLOR[Math.floor(Math.random() * COLOR.length)];
-        this.secondColor = COLOR[Math.floor(Math.random() * COLOR.length)];
+        this.firstColor = "black"; // COLOR[Math.floor(Math.random() * COLOR.length)];
+        this.secondColor = "#FC7A1E"; // COLOR[Math.floor(Math.random() * COLOR.length)];
         // colors may be the same, need refactoring for no duplicate colors
         console.log(this.firstColor, this.secondColor); //remove after I refactor for correct colors
 
@@ -43,25 +45,40 @@ export default class Lumines {
         this.time = { 
             start: 0, 
             elapsed: 0, 
-            level: 1000
+            seconds: 750
         };
     }
 
-    resetField() {
+    generateField() {
+        this.grid = this.getNewBoard();
+        this.nextGrid = this.getNewPieceBoard();
+        this.generatePieces();
+        this.animate();
+    }
+
+    generatePieces(){
         const startPosition = {
             x: 7,
-            y: -1
+            y: 0
         };
 
-        this.grid = this.getNewBoard();
-        this.piece = new Piece(this.ctx, this.ctxDos, this.firstColor, this.secondColor, startPosition.x, startPosition.y);
+        this.piece = new Piece(this.ctx, this.firstColor, this.secondColor, startPosition.x, startPosition.y);
         console.log(this.piece);
-        this.animate();
+        this.secondPiece = new Piece(this.ctxDos, this.firstColor, this.secondColor, startPosition.x = 1, startPosition.y = 1);
+        console.log(this.secondPiece);
+        console.table(this.grid);
+        this.thirdPiece = new Piece(this.ctxDos, this.firstColor, this.secondColor, startPosition.x = 1, startPosition.y = 4);
+        this.fourthPiece = new Piece(this.ctxDos, this.firstColor, this.secondColor, startPosition.x = 1, startPosition.y = 7);
     }
 
     getNewBoard() {
         return Array.from({length: ROWS}, () => Array(COLS).fill(0));
     }
+
+    getNewPieceBoard(){
+        return Array.from({ length: PIECE_ROWS }, () => Array(PIECE_COLS).fill(0));
+    }
+
 
     movement() {
         const POSITION = {
@@ -129,7 +146,7 @@ export default class Lumines {
     }
 
     emptyPos(x, y) {
-        return this.grid[y] && this.grid[y][x] === 0;
+        return this.grid[x] && this.grid[y] && this.grid[y][x] === 0;
     }
 
     validPosition(piece) {
@@ -137,7 +154,7 @@ export default class Lumines {
             return row.every((pos, dx) => {
                 let x = piece.x + dx;
                 let y = piece.y + dy;
-                return (this.emptyPos(pos) || (this.sideBoundaries(x) & this.bottomBoundary(y)));
+                return (this.emptyPos(x, y) && (this.sideBoundaries(x) && this.bottomBoundary(y)));
             });
         });
     }
@@ -145,19 +162,65 @@ export default class Lumines {
     animate(now = 0){
         this.time.elapsed = now - this.time.start;
 
-        if (this.time.elapsed > this.time.level){
+        if (this.time.elapsed > this.time.seconds){
             this.time.start = now;
             this.animatePiece();
         }
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.piece.render();
+        this.secondPiece.render();
+        this.thirdPiece.render();
+        this.fourthPiece.render();
+
+        this.grid.forEach((row, y) => {
+            row.forEach((posVal, x) => {
+                if (posVal === 1) {
+                    this.ctx.fillStyle = this.firstColor;
+                    this.ctx.fillRect(x, y, 1, 1);
+                } else if (posVal === 2) {
+                    this.ctx.fillStyle = this.secondColor;
+                    this.ctx.fillRect(x, y, 1, 1);
+                }
+            });
+        });
         requestAnimationFrame(this.animate);
     }
 
     animatePiece(){
         let newPosDown = ANIMATION.down(this.piece);
+        let startPosition = {
+            x: 1,
+            y: 7
+        };
+
         if (this.validPosition(newPosDown)) {
             this.piece.move(newPosDown);
+        } else {
+            this.dropPiece();
+            this.piece = this.secondPiece;
+            this.piece.ctx = this.ctx;
+            this.piece.x = 7;
+            this.piece.y = 0;
+            
+            this.secondPiece = this.thirdPiece;
+            this.secondPiece.x = 1;
+            this.secondPiece.y = 1;
+
+            this.thirdPiece = this.fourthPiece;
+            this.thirdPiece.x = 1;
+            this.thirdPiece.y = 4;
+
+            this.fourthPiece = new Piece(this.ctxDos, this.firstColor, this.secondColor, startPosition.x, startPosition.y);
         }
+    }
+
+    dropPiece(){
+        this.piece.piece.forEach((row, y) => {
+            row.forEach((posVal, x) => {
+                if (posVal > 0) {
+                    this.grid[y + this.piece.y][x + this.piece.x] = posVal;
+                }
+            });
+        });
     }
 }

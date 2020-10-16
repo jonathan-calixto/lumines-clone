@@ -37,9 +37,8 @@ Object.freeze(PIECE);
 const GRID_SIZE = 50;
 
 export default class Piece {
-    constructor(ctx, ctxDos, firstColor, secondColor, x, y){
+    constructor(ctx, firstColor, secondColor, x, y){
         this.ctx = ctx;
-        this.ctxDos = ctxDos;
         this.firstColor = firstColor;
         this.secondColor = secondColor;
         this.piece = PIECE[Math.floor(Math.random() * PIECE.length)];
@@ -49,11 +48,11 @@ export default class Piece {
 
     render(){
         this.piece.forEach((row, y) => {
-            row.forEach((value, x) => {
-                if (value === 1) {
+            row.forEach((posVal, x) => {
+                if (posVal === 1) {
                     this.ctx.fillStyle = this.firstColor;
                     this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
-                } else if (value === 2) {
+                } else if (posVal === 2) {
                     this.ctx.fillStyle = this.secondColor;
                     this.ctx.fillRect(this.x + x, this.y + y, 1, 1);
                 }
