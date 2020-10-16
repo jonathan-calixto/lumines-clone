@@ -146,7 +146,7 @@ export default class Lumines {
     }
 
     emptyPos(x, y) {
-        return this.grid[x] && this.grid[y] && this.grid[y][x] === 0;
+        return this.grid[y] && this.grid[y][x] === 0;
     }
 
     validPosition(piece) {
