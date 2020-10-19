@@ -16,7 +16,7 @@
 
 2. Add animated backgrounds and pieces that change with the music (themes)
 
-## Technologies Used
+### Technologies Used
 
 1. Javascript - will handle the main game logic
 
