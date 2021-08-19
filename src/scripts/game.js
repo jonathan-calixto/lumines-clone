@@ -72,7 +72,7 @@ export default class Lumines {
     }
 
     getNewBoard() {
-        return Array.from({length: ROWS}, () => Array(COLS).fill(0));
+        return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
     }
 
     getNewPieceBoard(){
